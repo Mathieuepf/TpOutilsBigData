@@ -16,13 +16,13 @@ public class UserPair implements WritableComparable<UserPair> {
         this.user2 = new Text("");
     }
 
-    public UserPair(String user1, String user2) {
+    public void set(String user1, String user2) {
         if (user1.compareTo(user2) <= 0) {
-            this.user1 = new Text(user1);
-            this.user2 = new Text(user2);
+            this.user1.set(user1);
+            this.user2.set(user2);
         } else {
-            this.user1 = new Text(user2);
-            this.user2 = new Text(user1);
+            this.user1.set(user2);
+            this.user2.set(user1);
         }
     }
 
@@ -40,23 +40,29 @@ public class UserPair implements WritableComparable<UserPair> {
 
     @Override
     public int compareTo(UserPair o) {
-        int cmp = user1.compareTo(o.user1);
-        if (cmp == 0) {
-            return user2.compareTo(o.user2);
+        int cmp = this.user1.compareTo(o.user1);
+        if (cmp != 0) {
+            return cmp;
         }
-        return cmp;
+        return this.user2.compareTo(o.user2);
     }
 
     @Override
     public String toString() {
-        return this.user1 + "," + this.user2;
+        return user1 + "," + user2;
     }
 
-    public String getFirstUser() {
-        return user1.toString();
+    @Override
+    public int hashCode() {
+        return user1.hashCode() * 163 + user2.hashCode();
     }
 
-    public String getSecondUser() {
-        return user2.toString();
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof UserPair) {
+            UserPair other = (UserPair) o;
+            return user1.equals(other.user1) && user2.equals(other.user2);
+        }
+        return false;
     }
 }
