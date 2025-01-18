@@ -12,22 +12,20 @@ public class RecommendationsMapper extends Mapper<Object, Text, Text, Text> {
 
     @Override
     protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-        // Split the input line into user pair and common friends count
         String[] line = value.toString().split("\t");
         if (line.length != 2) {
-            return; // Ignore malformed lines
+            return;
         }
 
         String[] users = line[0].split(",");
         if (users.length != 2) {
-            return; // Ignore malformed pairs
+            return;
         }
 
         String userA = users[0];
         String userB = users[1];
         String commonFriendsCount = line[1];
 
-        // Emit recommendation for both users
         userKey.set(userA);
         recommendationValue.set(userB + "," + commonFriendsCount);
         context.write(userKey, recommendationValue);

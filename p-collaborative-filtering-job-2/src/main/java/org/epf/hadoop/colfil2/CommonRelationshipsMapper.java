@@ -17,7 +17,7 @@ public class CommonRelationshipsMapper extends Mapper<LongWritable, Text, UserPa
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         String[] line = value.toString().split("\t");
         if (line.length != 2) {
-            return; // Ignore malformed lines
+            return;
         }
 
         String userId = line[0];
@@ -25,13 +25,12 @@ public class CommonRelationshipsMapper extends Mapper<LongWritable, Text, UserPa
 
         List<String> relationsList = Arrays.asList(relationships);
 
-        // Generate all pairs of relations
         for (int i = 0; i < relationsList.size(); i++) {
             for (int j = i + 1; j < relationsList.size(); j++) {
                 String user1 = relationsList.get(i);
                 String user2 = relationsList.get(j);
                 userPair.set(user1, user2);
-                user.set(userId); // Propagate the originating user
+                user.set(userId);
                 context.write(userPair, user);
             }
         }

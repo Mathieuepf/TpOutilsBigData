@@ -13,7 +13,6 @@ public class RecommendationsReducer extends Reducer<Text, Text, Text, Text> {
 
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-        // Collect recommendations for the user
         List<Recommendation> recommendations = new ArrayList<>();
         for (Text value : values) {
             String[] parts = value.toString().split(",");
@@ -26,10 +25,8 @@ public class RecommendationsReducer extends Reducer<Text, Text, Text, Text> {
             recommendations.add(new Recommendation(recommendedUser, commonFriendsCount));
         }
 
-        // Sort recommendations by common friends count in descending order
         Collections.sort(recommendations, Comparator.comparingInt(Recommendation::getCount).reversed());
 
-        // Select top 5 recommendations
         StringBuilder topRecommendations = new StringBuilder();
         for (int i = 0; i < Math.min(5, recommendations.size()); i++) {
             if (i > 0) {
@@ -40,11 +37,9 @@ public class RecommendationsReducer extends Reducer<Text, Text, Text, Text> {
                     .append(recommendations.get(i).getCount());
         }
 
-        // Emit the user and their top recommendations
         context.write(key, new Text(topRecommendations.toString()));
     }
 
-    // Helper class for recommendations
     private static class Recommendation {
         private final String user;
         private final int count;
